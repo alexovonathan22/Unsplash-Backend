@@ -11,7 +11,7 @@ using Unsplash.Core.Util;
 
 namespace Unsplash.Core.Services.Interfaces
 {
-  public class AuthService : IAuthService
+    public class AuthService : IAuthService
     {
         private readonly IRepository<User> repository;
         private readonly ILogger<AuthService> log;
@@ -53,6 +53,8 @@ namespace Unsplash.Core.Services.Interfaces
             var claims = new ClaimsIdentity(new[] { new Claim("id", $"{user.ID}"), new Claim(ClaimTypes.Role, user.Role), new Claim(ClaimTypes.Name, user.Username) });
             var jwtSecret = configuration["JwtSettings:Secret"];
             var token = AuthUtil.GenerateJwtToken(jwtSecret, claims);
+
+            _httpContextAccessor.HttpContext.Session.SetString("JWToken", token);
             claims.AddClaim(new Claim("token", token));
 
             var refreshToken = AuthUtil.GenerateRefreshToken();
@@ -74,9 +76,26 @@ namespace Unsplash.Core.Services.Interfaces
             //throw new NotImplementedException("h");
         }
 
-        public Task<(UserModel user, string message)> LogUserOut(SignUpModel model)
+        public async Task<(object user, string message)> LogUserOut()
         {
-            throw new NotImplementedException();
+            var userContext = _httpContextAccessor.HttpContext.User.Identity.Name;
+            if (!string.IsNullOrEmpty(userContext))
+            {
+                try
+                {
+                    _httpContextAccessor.HttpContext.Session.Clear();
+                    return (user: userContext, message: $"Successfully logged out.");
+
+                }
+                catch (Exception e)
+                {
+                    log.LogError($"Error logging out. {e.Message}");
+                    return (user: null, message: $"Error logging out.");
+                }
+
+            }
+            return (user: null, message: $"Error logging out.");
+
         }
 
         public async Task<(UserModel user, string message)> RegisterUser(SignUpModel model)
@@ -101,7 +120,7 @@ namespace Unsplash.Core.Services.Interfaces
                 {
                     Username = newuser.Username,
                     Email = newuser.Email,
-                    Id=newuser.ID
+                    Id = newuser.ID
                 };
 
                 return (user: returnView, message: "User created successfully.");

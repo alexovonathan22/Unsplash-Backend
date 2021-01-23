@@ -12,6 +12,8 @@ using Unsplash.Core.ApiModels;
 
 namespace Unsplash.Api.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class ImageController : ControllerBase
     {
         private readonly IImageService _iserve;
@@ -66,11 +68,11 @@ namespace Unsplash.Api.Controllers
             return BadRequest(response);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> RetrieveImage(int id)
+        [HttpGet("{imageid}")]
+        public async Task<IActionResult> RetrieveImage(int imageid)
         {
             var response = new APIResponse();
-            var (entity, message) = await _iserve.GetImage(id);
+            var (entity, message) = await _iserve.GetImage(imageid);
             if(entity != null)
             {
                 response.Result = entity;

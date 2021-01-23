@@ -12,6 +12,8 @@ using Unsplash.Core.ApiModels;
 
 namespace Unsplash.Api.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class CategoryController : ControllerBase
     {
          private readonly ICategoryService _catserv;
@@ -28,7 +30,7 @@ namespace Unsplash.Api.Controllers
        /// Category Endpoints to filter image by category selected(passed)
        /// </summary>
        /// <returns></returns>
-        [HttpPost]
+        [HttpPost("filterimage")]
         public async Task<IActionResult> FilterImageByCategory(CategoryModel model)
         {
             var response = new APIResponse();

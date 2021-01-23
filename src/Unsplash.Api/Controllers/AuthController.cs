@@ -100,13 +100,12 @@ namespace Unsplash.Api.Controllers
             return BadRequest(response);
         }
         [HttpPost("logout")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Logout(SignUpModel userdto)
+        public async Task<IActionResult> Logout()
         {
             var response = new APIResponse();
             response.StatusCode = "01";
             response.Result = null;
-            var (user, message) = await _auth.RegisterUser(userdto); ;
+            var (user, message) = await _auth.LogUserOut(); ;
             if (user != null)
             {
                 response.Result = user;

@@ -19,18 +19,20 @@ using Unsplash.Core.DataAccess;
 using Unsplash.Core.Services;
 using Unsplash.Core.Services.Interfaces;
 using Unsplash.Core.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Unsplash.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             Configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
 
+        private readonly IHttpContextAccessor _httpContextAccessor;
         public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -81,6 +83,7 @@ namespace Unsplash.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         { 
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -96,10 +99,20 @@ namespace Unsplash.Api
                 .AllowAnyHeader()
                 .SetIsOriginAllowed(origin => true)
                 .AllowCredentials());
-
+            app.UseCookiePolicy();    
+            app.UseSession(); 
+            var ctx = _httpContextAccessor.HttpContext;
+            app.Use(async (ctx, next) =>    
+            {    
+                var JWToken = ctx.Session.GetString("JWToken");    
+                if (!string.IsNullOrEmpty(JWToken))    
+                {    
+                    ctx.Request.Headers.Add("Authorization", "Bearer " + JWToken);    
+                }    
+                await next();    
+            });    
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
