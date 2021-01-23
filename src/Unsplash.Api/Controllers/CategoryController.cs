@@ -32,7 +32,7 @@ namespace Unsplash.Api.Controllers
         public async Task<IActionResult> FilterImageByCategory(CategoryModel model)
         {
             var response = new APIResponse();
-            var (entity, message) = await _catserv.FilterCategory(model);
+            var (entity, message) = await _catserv.FilterImgByCategory(model);
             if(entity != null)
             {
                 response.Result = entity;
@@ -97,10 +97,10 @@ namespace Unsplash.Api.Controllers
        /// </summary>
        /// <returns></returns>
         [HttpPost("create")]
-        public async Task<IActionResult> CreateCategory(CreateCategoryModel id)
+        public async Task<IActionResult> CreateCategory(CreateCategoryModel model)
         {
             var response = new APIResponse();
-            var (entity, message) = await _catserv.CreateCAtegory(id);
+            var (entity, message) = await _catserv.CreateCAtegory(model);
             if(entity != null)
             {
                 response.Result = entity;

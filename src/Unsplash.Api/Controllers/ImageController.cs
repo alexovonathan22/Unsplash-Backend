@@ -44,6 +44,83 @@ namespace Unsplash.Api.Controllers
             return BadRequest(response);
         }
 
+        /// <summary>
+        /// Endpoints to get all uploaded images to cloudinary.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("viewall")]
+        public async Task<IActionResult> RetrieveImages()
+        {
+            var response = new APIResponse();
+            var (entity, message) = await _iserve.RetrieveImages();
+            if(entity != null)
+            {
+                response.Result = entity;
+                response.ApiMessage = message;
+                response.StatusCode = "00";
+                return Ok(response);
+            }
+            response.ApiMessage = message;
+            response.Result = entity;
+
+            return BadRequest(response);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> RetrieveImage(int id)
+        {
+            var response = new APIResponse();
+            var (entity, message) = await _iserve.GetImage(id);
+            if(entity != null)
+            {
+                response.Result = entity;
+                response.ApiMessage = message;
+                response.StatusCode = "00";
+                return Ok(response);
+            }
+            response.ApiMessage = message;
+            response.Result = entity;
+
+            return BadRequest(response);
+        }
+
+
+        [HttpGet("{tagline}")]
+        public async Task<IActionResult> SearchForImageByTag(string tagline)
+        {
+            var response = new APIResponse();
+            var (entity, message) = await _iserve.SearchImageByTagline(tagline);
+            if(entity != null)
+            {
+                response.Result = entity;
+                response.ApiMessage = message;
+                response.StatusCode = "00";
+                return Ok(response);
+            }
+            response.ApiMessage = message;
+            response.Result = entity;
+
+            return BadRequest(response);
+        }
+
+        [HttpGet("{name}")]
+        public async Task<IActionResult> SearchForImageByName(string name)
+        {
+            var response = new APIResponse();
+            var (entity, message) = await _iserve.SearchImageByName(name);
+            if(entity != null)
+            {
+                response.Result = entity;
+                response.ApiMessage = message;
+                response.StatusCode = "00";
+                return Ok(response);
+            }
+            response.ApiMessage = message;
+            response.Result = entity;
+
+            return BadRequest(response);
+        }
+
 
         #endregion
     }

@@ -14,7 +14,7 @@ namespace Unsplash.Api
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args)
                          .Build();
@@ -37,7 +37,7 @@ namespace Unsplash.Api
                     var context = services.GetRequiredService<Core.DataAccess.UnsplashContext>();
 
                     //4. Call the DataGenerator to create sample data
-                    await ModelBuilderExtensions.Initialize(services);
+                    //await ModelBuilderExtensions.Initialize(services);
                     //logging initial app state
                     Log.Information("Unsplash just started.");
                     host.Run();
