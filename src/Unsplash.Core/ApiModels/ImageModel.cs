@@ -23,5 +23,20 @@ namespace Unsplash.Core.ApiModels
 
             return photo;
         }
+        internal ImageModel ReturnImgModel(Photo imageModel)
+        {
+            if (imageModel == null) return null;
+
+            var photo = new ImageModel();
+            photo.CategoryId = imageModel.CategoryId;
+            photo.CategoryName=imageModel.CategoryName;
+            photo.FilePath =imageModel.FilePath;
+            photo.PhotoName =imageModel.PhotoName;
+            photo.Tags =imageModel.Tags;
+
+
+            return photo;
+        }
+
     }
 }

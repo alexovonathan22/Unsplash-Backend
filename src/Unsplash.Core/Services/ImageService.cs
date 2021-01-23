@@ -29,33 +29,76 @@ namespace Unsplash.Core.Services
             _imgrepo = imgrepo;
         }
 
-        public Task<(object response, string message)> GetImage()
+        public async Task<(object response, string message)> GetImage(int id)
         {
-            throw new System.NotImplementedException();
+            if(id > 0) return (response:null, message:$"In correct parameter passed.");
+           
+            // try to get the image
+            var img = await _imgrepo.FirstOrDefault(i => i.ID ==id);
+            if(img == null) return (response:null, message:$"Image doesn't exist.");
+            var image = new ImageModel().ReturnImgModel(img);
+            return (response:image, message:$"Success. Retrieved Image.");
         }
 
-        public Task<(object response, string message)> RetrieveImages()
+        /// <summary>
+        /// This method will get called to get all images.
+        /// </summary>
+        /// <returns>
+        /// Returns a tuple of the method response and a descriptive message.
+        /// </returns>
+        public async Task<(object response, string message)> RetrieveImages()
         {
-            throw new System.NotImplementedException();
+            //Get from cloudinary | db
+           var allImages = await _imgrepo.LoadAll();
+           if(allImages==null) return (response:null, message:$"Couldnt retrieve images.");
+           return (response:allImages, message:$"Retrieved all Images, {allImages.Count} of them.");
         }
 
-        public Task<(object response, string message)> SearchImageByName()
+        /// <summary>
+        /// This method will get called to Search image to by Name
+        /// </summary>
+        /// <param name="imageModel"></param>
+        /// <returns>
+        /// Returns a tuple of the method response and a descriptive message.
+        /// </returns>
+        public async Task<(object response, string message)> SearchImageByName(string name)
         {
-            throw new System.NotImplementedException();
+            if(string.IsNullOrEmpty(name)) return (response:null, message:$"In correct parameter passed.");
+           
+            // try to get the image
+            var img = await _imgrepo.FirstOrDefault(i => i.PhotoName == name);
+            if(img == null) return (response:null, message:$"Image doesn't exist.");
+            var image = new ImageModel().ReturnImgModel(img);
+            return (response:image, message:$"Success. Retrieved image with {name}");
         }
 
-        public Task<(object response, string message)> SearchImageByTagline()
+        /// <summary>
+        /// This method will get called to Search image to by Tagline
+        /// </summary>
+        /// <param name="imageModel"></param>
+        /// <returns>
+        /// Returns a tuple of the method response and a descriptive message.
+        /// </returns>
+        public async Task<(object response, string message)> SearchImageByTagline(string tagline)
         {
-            throw new System.NotImplementedException();
+            //Do note that tags are either strings seperated by ; or,
+            //tHey could be collected as arrays of string but are to be submitted as strings ,or; separated
+            if(string.IsNullOrEmpty(tagline)) return (response:null, message:$"In correct parameter passed.");
+           
+            // try to get the image or images
+            var img = await _imgrepo.LoadWhere(i => i.Tags.Contains(tagline));
+            if(img == null) return (response:null, message:$"Image doesn't exist.");
+            var image = img;
+            return (response:image, message:$"Success. Retrieved image(s) with {tagline}");
         }
 
         /// <summary>
         /// This method will get called to upload image to cloudinary
-        /// and also store information abotu the image to DB.
+        /// and also store information about the image to DB.
         /// </summary>
         /// <param name="imageModel"></param>
         /// <returns>
-        /// Returns a tuple of thr method response and a descriptive message.
+        /// Returns a tuple of the method response and a descriptive message.
         /// </returns>
         public async Task<(object response, string message)> UploadImageCloudinary(ImageModel imageModel)
         {

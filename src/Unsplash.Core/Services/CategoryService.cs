@@ -46,19 +46,71 @@ namespace Unsplash.Core.Services
 
         }
 
-        public Task<(object response, string message)> FilterCategory(CategoryModel model)
+        public async Task<(object response, string message)> FilterImgByCategory(CategoryModel model)
         {
-            throw new System.NotImplementedException();
+            if (model == null) return (response: null, message: "Failed. Check details passed.");
+            var filtered = await _catrepo.LoadWhere(c => c.CategoryName ==model.CatName && c.ID ==model.Id);
+            if(filtered==null) return (response: null, message: $"Failed. Couldn't get Images by Category {model.CatName}"); 
+
+            return (response: filtered, message: $"Success. Retrieved Images by this category {model.CatName}.");
         }
 
-        public Task<(object response, string message)> GetCategories()
+        /// <summary>
+        /// This method will get called to get all categories.
+        /// </summary>
+        /// <returns>
+        /// Returns a tuple of the method response and a descriptive message.
+        /// </returns>
+        public async Task<(object response, string message)> GetCategories()
         {
-            throw new System.NotImplementedException();
+           //Get categories from  db
+           var cats = await _catrepo.LoadAll();
+           if(cats==null) return (response:null, message:$"Couldnt retrieve images.");
+           return (response:cats, message:$"Retrieved all Categories, {cats.Count} of them.");
         }
 
-        public Task<(object response, string message)> GetCategory(int id)
+        /// <summary>
+        /// This method will get called to get a category.
+        /// </summary>
+        /// <returns>
+        /// Returns a tuple of the method response and a descriptive message.
+        /// </returns>
+        public async Task<(object response, string message)> GetCategory(int id)
         {
-            throw new System.NotImplementedException();
+            if(id > 0) return (response:null, message:$"In correct parameter passed.");
+           
+            // try to get the image
+            var cat = await _catrepo.FirstOrDefault(i => i.ID ==id);
+            if(cat == null) return (response:null, message:$"Image doesn't exist.");
+            var categ = cat;
+            return (response:categ, message:$"Success. Retrieved category.");
         }
     }
 }
+
+/*
+public async Task<(object response, string message)> GetImage(int id)
+        {
+            if(id > 0) return (response:null, message:$"In correct parameter passed.");
+           
+            // try to get the image
+            var img = await _imgrepo.FirstOrDefault(i => i.ID ==id);
+            if(img == null) return (response:null, message:$"Image doesn't exist.");
+            var image = new ImageModel().ReturnImgModel(img);
+            return (response:image, message:$"In correct parameter passed.");
+        }
+
+        /// <summary>
+        /// This method will get called to get all images.
+        /// </summary>
+        /// <returns>
+        /// Returns a tuple of the method response and a descriptive message.
+        /// </returns>
+        public async Task<(object response, string message)> RetrieveImages()
+        {
+            //Get from cloudinary | db
+           var allImages = await _imgrepo.LoadAll();
+           if(allImages==null) return (response:null, message:$"Couldnt retrieve images.");
+           return (response:allImages, message:$"Retrieved all Images, {allImages.Count} of them.");
+        }
+*/
