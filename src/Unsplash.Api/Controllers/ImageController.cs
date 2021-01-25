@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -29,7 +28,7 @@ namespace Unsplash.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadImgToCloudinary(ImageModel model)
+        public async Task<IActionResult> UploadImgToCloudinary([FromForm]ImageModel model)
         {
             var response = new APIResponse();
             var (entity, message) = await _iserve.UploadImageCloudinary(model);

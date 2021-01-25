@@ -13,7 +13,7 @@ namespace Unsplash.Core.ApiModels
             if(model==null) return null;
 
             var cat = new Category();
-            cat.CategoryName = model.Name;
+            cat.CategoryName = model.Name.ToLowerInvariant();
             cat.CreatedAt = DateTime.Now;
             cat.Description = model.Description;
             cat.ModifiedAt=DateTime.Now;

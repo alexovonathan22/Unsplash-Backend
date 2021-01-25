@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Serilog;
 using Microsoft.Extensions.DependencyInjection;
 using Unsplash.Core.DataAccess;
+using System.IO;
 
 namespace Unsplash.Api
 {
@@ -20,9 +21,11 @@ namespace Unsplash.Api
                          .Build();
             //Read Configuration from appSettings
             //remove log to console when in production
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
+            //string envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var config =  new ConfigurationBuilder()
+                             .SetBasePath(Directory.GetCurrentDirectory())
+                             .AddJsonFile("appsettings.json")
+                             .Build();
             //Initialize Logger
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(config)

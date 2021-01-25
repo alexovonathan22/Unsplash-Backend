@@ -41,15 +41,11 @@ namespace Unsplash.Api
                 });
         }
 
-        //Data Context
-        public static void ConfigureMySqlContext(this IServiceCollection services, IConfiguration config)
-        {
-            var connectionString = config["ConnectionString:Unsplash.ConnectionString"];
-
-            services.AddDbContext<Core.DataAccess.UnsplashContext>
-                (o => o.UseNpgsql(connectionString, 
-                    
-                    x => x.MigrationsAssembly("Unsplash.Core")));
-        }
+        // //Data Context
+        // public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration config)
+        // {
+        //     var connectionString = config["ConnectionString:Unsplash.ConnectionString"];
+        //     services.AddDbContext<UnsplashContext>(o => o.UseNpgsql(connectionString));
+        // }
     }
 }
