@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace Unsplash.Core.Models
 {
@@ -13,9 +14,11 @@ namespace Unsplash.Core.Models
         public int UserId {get;set;}
 
         [ForeignKey("CategoryId")]
+        [JsonIgnore]
         public virtual Category GetCategory { get; set; }
 
         [ForeignKey("UserId")]
+        [JsonIgnore]
         public virtual User GetUser { get; set; }
     }
 }

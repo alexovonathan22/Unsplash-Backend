@@ -14,18 +14,19 @@ namespace Unsplash.Core.Services
     {
         private readonly IRepository<User> _userrepo;
         private readonly IRepository<Category> _catrepo;
-
+        private readonly IRepository<Photo> _imgRepo;
         private readonly ILogger<CategoryService> log;
         private readonly IConfiguration configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CategoryService(IRepository<User> urepository, IRepository<Category> crepository, ILogger<CategoryService> log, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public CategoryService(IRepository<User> urepository, IRepository<Category> crepository, ILogger<CategoryService> log, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IRepository<Photo> imgRepo)
         {
             _userrepo = urepository;
             _catrepo = crepository;
             this.log = log;
             this.configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
+            _imgRepo = imgRepo;
         }
 
         public async Task<(object response, string message)> CreateCAtegory(CreateCategoryModel model)
@@ -48,11 +49,11 @@ namespace Unsplash.Core.Services
 
         public async Task<(object response, string message)> FilterImgByCategory(CategoryModel model)
         {
-            if (model == null) return (response: null, message: "Failed. Check details passed.");
-            var filtered = await _catrepo.LoadWhere(c => c.CategoryName ==model.CatName && c.ID ==model.Id);
-            if(filtered==null) return (response: null, message: $"Failed. Couldn't get Images by Category {model.CatName}"); 
+            if (model.catId < 1) return (response: null, message: "Failed. Check details passed.");
+            var filtered = await _imgRepo.LoadWhere(c => c.CategoryId == model.catId);
+            if (filtered == null || filtered.Count == 0) return (response: null, message: $"Failed. Couldn't find Images.");
 
-            return (response: filtered, message: $"Success. Retrieved Images by this category {model.CatName}.");
+            return (response: filtered, message: $"Success. Retrieved Images by this category.");
         }
 
         /// <summary>
@@ -63,10 +64,10 @@ namespace Unsplash.Core.Services
         /// </returns>
         public async Task<(object response, string message)> GetCategories()
         {
-           //Get categories from  db
-           var cats = await _catrepo.LoadAll();
-           if(cats==null) return (response:null, message:$"Couldnt retrieve images.");
-           return (response:cats, message:$"Retrieved all Categories, {cats.Count} of them.");
+            //Get categories from  db
+            var cats = await _catrepo.LoadAll();
+            if (cats == null) return (response: null, message: $"Couldnt retrieve images.");
+            return (response: cats, message: $"Retrieved all Categories, {cats.Count} of them.");
         }
 
         /// <summary>
@@ -77,13 +78,13 @@ namespace Unsplash.Core.Services
         /// </returns>
         public async Task<(object response, string message)> GetCategory(int id)
         {
-            if(id > 0) return (response:null, message:$"In correct parameter passed.");
-           
+            if (id < 0) return (response: null, message: $"In correct parameter passed.");
+
             // try to get the image
-            var cat = await _catrepo.FirstOrDefault(i => i.ID ==id);
-            if(cat == null) return (response:null, message:$"Image doesn't exist.");
+            var cat = await _catrepo.FirstOrDefault(i => i.ID == id);
+            if (cat == null) return (response: null, message: $"Category doesn't exist.");
             var categ = cat;
-            return (response:categ, message:$"Success. Retrieved category.");
+            return (response: categ, message: $"Success. Retrieved category {categ.CategoryName}");
         }
     }
 }

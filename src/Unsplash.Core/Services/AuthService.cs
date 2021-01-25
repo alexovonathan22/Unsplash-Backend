@@ -76,14 +76,14 @@ namespace Unsplash.Core.Services.Interfaces
             //throw new NotImplementedException("h");
         }
 
-        public async Task<(object user, string message)> LogUserOut()
+        public (object user, string message) LogUserOut()
         {
             var userContext = _httpContextAccessor.HttpContext.User.Identity.Name;
             if (!string.IsNullOrEmpty(userContext))
             {
                 try
                 {
-                    _httpContextAccessor.HttpContext.Session.Clear();
+                    _httpContextAccessor.HttpContext.Session.Remove("JWToken");
                     return (user: userContext, message: $"Successfully logged out.");
 
                 }

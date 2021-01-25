@@ -36,7 +36,7 @@ namespace Unsplash.Core.Services
 
         public async Task<(object response, string message)> GetImage(int id)
         {
-            if (id > 0) return (response: null, message: $"In correct parameter passed.");
+            if (id < 0) return (response: null, message: $"In correct parameter passed.");
 
             // try to get the image
             var img = await _imgrepo.FirstOrDefault(i => i.ID == id);
@@ -89,9 +89,9 @@ namespace Unsplash.Core.Services
             //Do note that tags are either strings seperated by ; or,
             //tHey could be collected as arrays of string but are to be submitted as strings ,or; separated
             if (string.IsNullOrEmpty(tagline)) return (response: null, message: $"In correct parameter passed.");
-
+            var tag = tagline.Replace(" ", "");
             // try to get the image or images
-            var img = await _imgrepo.LoadWhere(i => i.Tags.Contains(tagline));
+            var img = await _imgrepo.LoadWhere(i => i.Tags.Contains(tag));
             if (img == null) return (response: null, message: $"Image doesn't exist.");
             var image = img;
             return (response: image, message: $"Success. Retrieved image(s) with {tagline}");
@@ -100,6 +100,7 @@ namespace Unsplash.Core.Services
         /// <summary>
         /// This method will get called to upload image to cloudinary
         /// and also store information about the image to DB.
+        /// Also to create images on db.
         /// </summary>
         /// <param name="imageModel"></param>
         /// <returns>
@@ -132,7 +133,8 @@ namespace Unsplash.Core.Services
             newPhoto.CategoryName = checkCat.CategoryName;
             newPhoto.PhotoName = imageModel.PhotoName.ToLowerInvariant();
             newPhoto.Tags = tags;
-
+            
+            // Add the image to category and save to db
             
             try
             {

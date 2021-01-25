@@ -86,7 +86,7 @@ namespace Unsplash.Api.Controllers
         }
 
 
-        [HttpGet("{tagline}")]
+        [HttpGet("tags/{tagline}")]
         public async Task<IActionResult> SearchForImageByTag(string tagline)
         {
             var response = new APIResponse();
@@ -104,7 +104,7 @@ namespace Unsplash.Api.Controllers
             return BadRequest(response);
         }
 
-        [HttpGet("{name}")]
+        [HttpGet("name/{name}")]
         public async Task<IActionResult> SearchForImageByName(string name)
         {
             var response = new APIResponse();

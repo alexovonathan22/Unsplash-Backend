@@ -99,13 +99,15 @@ namespace Unsplash.Api.Controllers
 
             return BadRequest(response);
         }
+
+        // 
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
             var response = new APIResponse();
             response.StatusCode = "01";
             response.Result = null;
-            var (user, message) = await _auth.LogUserOut(); ;
+            var (user, message) = _auth.LogUserOut(); ;
             if (user != null)
             {
                 response.Result = user;
