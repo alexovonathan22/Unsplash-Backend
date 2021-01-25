@@ -24,8 +24,10 @@ namespace Unsplash.Core.Util
             if (CheckImageFile(model.ImgData))
             {
                 filePath = await GetFilePathAsync(model.ImgData, env);
+            }else{
+                return (url:null, img:null, message:$"Failed. Incorrect file extension use jpeg, jpg, png.");
             }
-            if(string.IsNullOrEmpty(filePath)) return (url:null, img:null, message:$"Failted to get correct file name.");
+            if(string.IsNullOrEmpty(filePath)) return (url:null, img:null, message:$"Failed to get correct file name.");
              
             try
             {
@@ -62,6 +64,7 @@ namespace Unsplash.Core.Util
         {
             string fileName;
             string path;
+            file.FileName.Replace(" ", "");
             try
             {
                 var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];

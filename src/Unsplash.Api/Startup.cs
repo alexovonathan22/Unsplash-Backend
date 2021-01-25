@@ -65,40 +65,38 @@ namespace Unsplash.Api
             services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
             // Adding CORS allowing all origin for development purposes
             services.AddCors();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Unsplash.Api", Version = "v1" });
-            });
-
             // services.AddSwaggerGen(c =>
             // {
-            // // configure SwaggerDoc and others
-            // var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.XML";
-            //     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-            //     c.IncludeXmlComments(xmlPath);
-            // // add JWT Authentication to swagger
-            // var securityScheme = new OpenApiSecurityScheme
-            //     {
-            //         Name = "Unsplash.Api",
-            //         Description = "Enter JWT Bearer token **_only_**",
-            //         In = ParameterLocation.Header,
-            //         Type = SecuritySchemeType.Http,
-            //         Scheme = "bearer", // must be lower case
-            //     BearerFormat = "JWT",
-            //         Reference = new OpenApiReference
-            //         {
-            //             Id = JwtBearerDefaults.AuthenticationScheme,
-            //             Type = ReferenceType.SecurityScheme
-            //         }
-            //     };
-            //     c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
-            //     c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            //     {
-            //     {securityScheme, new string[] { }}
-            //     });
-
-
+            //     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Unsplash.Api", Version = "v1" });
             // });
+
+            services.AddSwaggerGen(c =>
+            {
+            // configure SwaggerDoc and others
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.XML";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            // add JWT Authentication to swagger
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Name = "Unsplash.Api",
+                    Description = "Enter JWT Bearer token **_only_**",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer", // must be lower case
+                    BearerFormat = "JWT",
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                {securityScheme, new string[] { }}
+                });
+            });
             services.AddDbContext<UnsplashContext>(o => o.UseNpgsql(connectionString));
             //services.ConfigureSqlContext(Configuration);
             services.AddControllers(config =>
